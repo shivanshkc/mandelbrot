@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mandelbrot</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #subtext {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body onload="main()">
+    <p id="subtext"></p>
+
+    <canvas id="universe"></canvas>
+    <script src="src/utils.js"></script>
+    <script src="src/index.js"></script>
+</body>
+
+</html>
