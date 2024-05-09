@@ -11,7 +11,6 @@ permissions:
 jobs:
   semver:
     name: Semver
-    needs: build
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
