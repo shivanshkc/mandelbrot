@@ -1,0 +1,11 @@
+name: CI
+on:
+  # Runs on all pull-request events on all branches.
+  pull_request:
+
+permissions:
+  # Can only read the source code.
+  contents: read
+
+jobs:
+

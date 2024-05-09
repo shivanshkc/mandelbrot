@@ -1,24 +1,29 @@
 async function main() {
+    // Load shaders.
     const vSource = await utils.fetchText("shaders/vert.glsl");
     const fSource = await utils.fetchText("shaders/frag.glsl");
 
-    // Initialize WebGL context.
+    // Load the canvas.
     const canvas = document.getElementById("universe");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Element to render FPS.
     const subtext = document.getElementById("subtext");
 
+    // Initialize WebGL context.
     const gl = canvas.getContext("webgl2");
     if (!gl) {
         alert("Unable to initialize WebGL. Your browser may not support it.");
         return;
     }
 
-    const vShader = compileVertexShader(gl, vSource);
-    const fShader = compileFragmentShader(gl, fSource);
+    // Compile shaders.
+    const vShader = utils.compileVertexShader(gl, vSource);
+    const fShader = utils.compileFragmentShader(gl, fSource);
 
-    const program = createProgram(gl, vShader, fShader);
+    // Create and use program.
+    const program = utils.createProgram(gl, vShader, fShader);
     gl.useProgram(program);
 
     // Create buffer to store vertex positions.
@@ -32,15 +37,47 @@ async function main() {
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
+    // Uniform for screen size.
     const uScreenSizeLoc = gl.getUniformLocation(program, 'u_screenSize');
     gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
 
+    // Uniform for zoom level.
     const uZoomLevelLoc = gl.getUniformLocation(program, "u_zoomLevel");
     let zoomLevel = 300.0;
 
+    // Uniform for axis translation.
+    const uTranslationLoc = gl.getUniformLocation(program, "u_translation");
+    let translation = [0, 0];
+
+    // Uniform to control if the crosshair should be shown.
+    const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
+
+    // Uniform to control the power of z in the mandelbrot function.
+    const uZPower = gl.getUniformLocation(program, "u_zPower");
+    let zPower = 0.0;
+
+    // Respond to mouse wheel movements.
     window.onwheel = (event) => {
-        if (zoomLevel + event.deltaY > 10) zoomLevel += event.deltaY;
+        zoomLevel = Math.max(10, zoomLevel - (event.deltaY * zoomLevel * 0.001));
+    }
+
+    // Keep track if mouse is down, for click and drag.
+    let isMouseDown = false;
+    window.onmousedown = () => isMouseDown = true;
+    window.onmouseup = () => isMouseDown = false;
+
+    // Keep track of mouse movement, for click and drag.
+    window.onmousemove = (event) => {
+        // Do nothing is mouse is not down.
+        if (!isMouseDown) return;
+        // Update translation.
+        translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
     };
+
+    // Degree of the mandelbrot set for animations.
+    const mandelDegree = 2.001;
+    const a = (mandelDegree - 1) / 2;
+    const b = (mandelDegree + 1) / 2;
 
     /**
      * Main render loop.
@@ -51,65 +88,28 @@ async function main() {
 
         // Update zoom level.
         gl.uniform1f(uZoomLevelLoc, zoomLevel);
+        // Update axis translation.
+        gl.uniform2f(uTranslationLoc, ...translation);
+        // Update crosshair visibility.
+        gl.uniform1i(uShowCrosshair, isMouseDown ? 1 : 0);
+
+        // Update the power of Z.
+        if (zPower < 2) {
+            zPower = (Math.cos(timestamp * 0.002 - Math.PI) * a) + b;
+            gl.uniform1f(uZPower, zPower);
+        } else {
+            gl.uniform1f(uZPower, 2);
+        }
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
+        // Next frame.
         requestAnimationFrame(renderLoop);
     }
 
+    // Trigger animation loop.
     requestAnimationFrame(renderLoop);
 }
-
-function compileVertexShader(gl, source) {
-    // Create vertex shader.
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vertexShader, source);
-
-    // Compile vertex shader.
-    gl.compileShader(vertexShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-        console.error("Failed to compile vertex shader:", gl.getShaderInfoLog(vertexShader));
-        return;
-    }
-
-    return vertexShader;
-}
-
-function compileFragmentShader(gl, source) {
-    // Create fragment shader.
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragmentShader, source);
-
-    // Compile fragment shader.
-    gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-        console.error("Failed to compile fragment shader:", gl.getShaderInfoLog(fragmentShader));
-        return;
-    }
-
-    return fragmentShader;
-}
-
-function createProgram(gl, vertexShader, fragmentShader) {
-    // Create and setup program.
-    const program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error("Failed to link program:", gl.getProgramInfoLog(program));
-        return;
-    }
-
-    gl.validateProgram(program);
-    if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-        console.error("Failed to validate program:", gl.getProgramInfoLog(program));
-        return;
-    }
-
-    return program;
-};
