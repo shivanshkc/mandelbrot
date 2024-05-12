@@ -16,7 +16,7 @@ function attachMouseControls() {
 
     // Keep track of mouse movement, for click and drag.
     window.onmousemove = (event) => {
-        // Do nothing is mouse is not down.
+        // Do nothing if mouse is not down.
         if (!isMouseDown) return;
         // Update translation.
         translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
@@ -24,28 +24,54 @@ function attachMouseControls() {
 }
 
 function attachTouchControls() {
-    let previousTouch;
+    let lastTouch;
+    let lastPinchWidth;
 
-    window.ontouchstart = () => isMouseDown = true;
-    window.ontouchend = () => {
+    window.ontouchstart = (event) => {
+        event.preventDefault();
+
+        // To display the crosshair.
+        isMouseDown = true;
+
+        const { touches } = event;
+        if (touches.length === 2) {
+            lastPinchWidth = Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+        }
+    }
+
+    window.ontouchend = (event) => {
+        event.preventDefault();
+
+        // To remove the crosshair.
         isMouseDown = false;
-        previousTouch = null;
+
+        lastTouch = null;
+        initialDistance = null;
     }
 
     window.ontouchmove = (event) => {
         event.preventDefault();
 
-        // Do nothing is mouse is not down.
-        if (!isMouseDown) return;
+        const { touches } = event;
+        switch (touches.length) {
+            // Handle translation/scrolling.
+            case 1:
+                if (lastTouch) {
+                    const mx = touches[0].pageX - lastTouch.pageX;
+                    const my = touches[0].pageY - lastTouch.pageY;
+                    translation = [translation[0] - mx / zoomLevel, translation[1] + my / zoomLevel];
+                }
 
-        const touch = event.touches[0];
-        if (previousTouch) {
-            const mx = touch.pageX - previousTouch.pageX;
-            const my = touch.pageY - previousTouch.pageY;
-            translation = [translation[0] - mx / zoomLevel, translation[1] + my / zoomLevel];
+                lastTouch = touches[0];
+                break;
+            // Handle zooming.
+            case 2:
+                const currentPinchWidth = Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+                zoomLevel = Math.max(10, zoomLevel - ((lastPinchWidth - currentPinchWidth) * zoomLevel * 0.005));
+                lastPinchWidth = currentPinchWidth;
+            default:
+                break;
         }
-
-        previousTouch = touch;
     };
 }
 
