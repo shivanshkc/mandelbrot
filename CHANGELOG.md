@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/shivanshkc/mandelbrot/compare/v1.0.0...v1.1.0) (2024-05-12)
+
+
+### Features
+
+* **core:** fit mobile screens ([ca735fc](https://github.com/shivanshkc/mandelbrot/commit/ca735fc592fe94052fb9830988fff6f5173ebaf1))
+
 # 1.0.0 (2024-05-09)
 
 
