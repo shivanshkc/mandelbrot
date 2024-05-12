@@ -1,5 +1,5 @@
 /** @type {number} */
-let zoomLevel = Math.min(300.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
+let zoomLevel = Math.min(400.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
 /** @type {[number, number]} */
 let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
 /** @type {boolean} */
@@ -85,6 +85,11 @@ async function main() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    window.onresize = (event) => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+
     // Element to render FPS.
     const subtext = document.getElementById("subtext");
 
@@ -125,22 +130,26 @@ async function main() {
     const uTranslationLoc = gl.getUniformLocation(program, "u_translation");
     // Uniform to control if the crosshair should be shown.
     const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
+    // Uniform to send FPS to the shader.
+    const uFPS = gl.getUniformLocation(program, "u_fps");
 
     // Uniform to control the power of z in the mandelbrot function.
     const uZPower = gl.getUniformLocation(program, "u_zPower");
-    let zPower = 0.0;
+    let zPower = 0;
 
-    // Degree of the mandelbrot set for animations.
-    const mandelDegree = 2.001;
-    const a = (mandelDegree - 1) / 2;
-    const b = (mandelDegree + 1) / 2;
+    // First timestamp to normalize render loop timestamps.
+    let firstTimestamp;
 
     /**
      * Main render loop.
      * @param {number} timestamp
      */
     function renderLoop(timestamp) {
-        utils.showFPS(timestamp, subtext);
+        if (!firstTimestamp) firstTimestamp = timestamp;
+        timestamp -= firstTimestamp;
+
+        const fps = utils.showFPS(timestamp);
+        subtext.innerText = `${fps.average10} FPS`;
 
         // Update screen size.
         gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
@@ -151,14 +160,12 @@ async function main() {
         gl.uniform2f(uTranslationLoc, ...translation);
         // Update crosshair visibility.
         gl.uniform1i(uShowCrosshair, isMouseDown ? 1 : 0);
+        // Update FPS.
+        gl.uniform1f(uFPS, fps.average10);
 
         // Update the power of Z.
-        if (zPower < 2) {
-            zPower = (Math.cos(timestamp * 0.002 - Math.PI) * a) + b;
-            gl.uniform1f(uZPower, zPower);
-        } else {
-            gl.uniform1f(uZPower, 2);
-        }
+        zPower = zPower < 2 ? Math.sin(timestamp * 0.001) + 1.0001 : 2;
+        gl.uniform1f(uZPower, zPower);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);

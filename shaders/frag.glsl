@@ -1,12 +1,12 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 
 uniform vec2 u_screenSize;
 uniform float u_zoomLevel;
 uniform vec2 u_translation;
 uniform int u_showCrosshair;
-
 uniform float u_zPower;
+uniform float u_fps;
 
 // Output pixel color.
 out vec4 fragColor;
@@ -17,7 +17,7 @@ struct mandelbrotData {
     vec2 firstOutsideZ;
     int firstOutsideIndex;
 
-    bool usedInsideEquation;
+    bool isEquationOptimized;
 };
 
 bool isInMandelbrotCardioid(vec2 point) {
@@ -57,7 +57,8 @@ mandelbrotData mandelbrot(vec2 point) {
         // Znew = Z^n + C
         z = cpow(z, u_zPower) + point;
         // Escape time algorithm.
-        if (length(z) > 2.0) return mandelbrotData(false, z, i, false);
+        // Using 256 here instead of 2.0 for color smoothing.
+        if (length(z) > 256.0) return mandelbrotData(false, z, i, false);
     }
 
     return mandelbrotData(true, vec2(0, 0), 0, false);
@@ -106,7 +107,12 @@ void main() {
     // fragColor = vec4(0.0, 0.0, float(data.firstOutsideIndex) / 12.0, 1);
 
     // Bright fiery boundary.
-    fragColor = vec4(xy * float(data.firstOutsideIndex) / (u_screenSize * 12.0), 0, 1);
+    // fragColor = vec4(xy * float(data.firstOutsideIndex) / (u_screenSize * 12.0), 0, 1);
+
+    // JMAIO's color scheme. // Requires a smoothing factor in the mandelbrot function (z < 256)
+    float sl = float(data.firstOutsideIndex) - log2(log2(length(data.firstOutsideZ))) + 4.0;
+    vec3 col = 0.5 + 0.5*cos(1.0 +  sl*0.5 + vec3(0.0, 0.6, 1.0));
+    fragColor = vec4(col, 1.0);
 
     // All layers visible.
     // fragColor = vec4(0, 0, sin01(float(data.firstOutsideIndex)), 1);
