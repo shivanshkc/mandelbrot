@@ -85,6 +85,11 @@ async function main() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    window.onresize = (event) => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+
     // Element to render FPS.
     const subtext = document.getElementById("subtext");
 
