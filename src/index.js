@@ -130,20 +130,21 @@ async function main() {
 
     // Uniform to control the power of z in the mandelbrot function.
     const uZPower = gl.getUniformLocation(program, "u_zPower");
-    let zPower = 0.0;
+    let zPower = 2;
 
-    // Degree of the mandelbrot set for animations.
-    const mandelDegree = 2.001;
-    const a = (mandelDegree - 1) / 2;
-    const b = (mandelDegree + 1) / 2;
+    // First timestamp to normalize render loop timestamps.
+    let firstTimestamp;
 
     /**
      * Main render loop.
      * @param {number} timestamp
      */
     function renderLoop(timestamp) {
+        if (!firstTimestamp) firstTimestamp = timestamp;
+        timestamp -= firstTimestamp;
+
         const fps = utils.showFPS(timestamp);
-        subtext.innerText = `${fps.actual} FPS`;
+        subtext.innerText = `${fps.average10} FPS`;
 
         // Update screen size.
         gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
@@ -155,15 +156,9 @@ async function main() {
         // Update crosshair visibility.
         gl.uniform1i(uShowCrosshair, isMouseDown ? 1 : 0);
         // Update FPS.
-        gl.uniform1f(uFPS, fps.actual);
-
-        // Update the power of Z.
-        if (zPower < 2) {
-            zPower = (Math.cos(timestamp * 0.002 - Math.PI) * a) + b;
-            gl.uniform1f(uZPower, zPower);
-        } else {
-            gl.uniform1f(uZPower, 2);
-        }
+        gl.uniform1f(uFPS, fps.average10);
+        // Power of the iterative function.
+        gl.uniform1f(uZPower, zPower);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);

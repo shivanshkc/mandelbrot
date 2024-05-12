@@ -79,11 +79,12 @@ utils.fetchText = async function (path) {
 let _lastTimestamp = 0.0;
 let _frameCountYet = 0.0;
 let _lastAverageFPMS = 0.0;
+const recentFPS = [];
 
 /**
  * showFPS calculates the FPS as per the given timestamp and puts it in the given UI element.
  * @param {number} timestamp
- * @returns {{ average: number, actual: number }}
+ * @returns {{ actual: number, average: number, average10: number }}
  */
 utils.showFPS = function (timestamp) {
     const currentFPMS = 1.0 / (timestamp - _lastTimestamp);
@@ -96,9 +97,16 @@ utils.showFPS = function (timestamp) {
     const averageFPS = Math.ceil(latestAverageFPMS * 1000);
     const actualFPS = Math.ceil(currentFPMS * 1000);
 
+    if (recentFPS.length < 10) recentFPS.push(actualFPS);
+    else {
+        recentFPS.shift();
+        recentFPS.push(actualFPS);
+    }
+
     _lastTimestamp = timestamp;
     _lastAverageFPMS = latestAverageFPMS;
     _frameCountYet++;
 
-    return { average: averageFPS, actual: actualFPS };
+    const average10 = Math.ceil(recentFPS.reduce((sum, elem) => sum + elem, 0) / 10);
+    return { actual: actualFPS, average: averageFPS, average10 };
 };
