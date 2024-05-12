@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 
 uniform vec2 u_screenSize;
 uniform float u_zoomLevel;
