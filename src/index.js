@@ -125,6 +125,8 @@ async function main() {
     const uTranslationLoc = gl.getUniformLocation(program, "u_translation");
     // Uniform to control if the crosshair should be shown.
     const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
+    // Uniform to send FPS to the shader.
+    const uFPS = gl.getUniformLocation(program, "u_fps");
 
     // Uniform to control the power of z in the mandelbrot function.
     const uZPower = gl.getUniformLocation(program, "u_zPower");
@@ -140,7 +142,8 @@ async function main() {
      * @param {number} timestamp
      */
     function renderLoop(timestamp) {
-        utils.showFPS(timestamp, subtext);
+        const fps = utils.showFPS(timestamp);
+        subtext.innerText = `${fps.actual} FPS`;
 
         // Update screen size.
         gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
@@ -151,6 +154,8 @@ async function main() {
         gl.uniform2f(uTranslationLoc, ...translation);
         // Update crosshair visibility.
         gl.uniform1i(uShowCrosshair, isMouseDown ? 1 : 0);
+        // Update FPS.
+        gl.uniform1f(uFPS, fps.actual);
 
         // Update the power of Z.
         if (zPower < 2) {

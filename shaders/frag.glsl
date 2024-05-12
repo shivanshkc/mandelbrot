@@ -5,8 +5,8 @@ uniform vec2 u_screenSize;
 uniform float u_zoomLevel;
 uniform vec2 u_translation;
 uniform int u_showCrosshair;
-
 uniform float u_zPower;
+uniform float u_fps;
 
 // Output pixel color.
 out vec4 fragColor;
@@ -17,7 +17,7 @@ struct mandelbrotData {
     vec2 firstOutsideZ;
     int firstOutsideIndex;
 
-    bool usedInsideEquation;
+    bool isEquationOptimized;
 };
 
 bool isInMandelbrotCardioid(vec2 point) {
