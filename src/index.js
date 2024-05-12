@@ -43,11 +43,13 @@ async function main() {
 
     // Uniform for zoom level.
     const uZoomLevelLoc = gl.getUniformLocation(program, "u_zoomLevel");
-    let zoomLevel = 300.0;
+    // This Math.min makes the fractal fit on mobile screens.
+    let zoomLevel = Math.min(300.0, window.innerWidth / 4.25);
 
     // Uniform for axis translation.
     const uTranslationLoc = gl.getUniformLocation(program, "u_translation");
-    let translation = [0, 0];
+    // Center the mandelbrot set.
+    let translation = [-0.5, 0];
 
     // Uniform to control if the crosshair should be shown.
     const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
@@ -85,6 +87,9 @@ async function main() {
      */
     function renderLoop(timestamp) {
         utils.showFPS(timestamp, subtext);
+
+        // Update screen size.
+        gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
 
         // Update zoom level.
         gl.uniform1f(uZoomLevelLoc, zoomLevel);
