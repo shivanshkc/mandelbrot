@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/shivanshkc/mandelbrot/compare/v1.1.0...v1.2.0) (2024-05-12)
+
+
+### Features
+
+* **core:** add pinch to zoom ([edee01b](https://github.com/shivanshkc/mandelbrot/commit/edee01bed97d6f3b7560c44e62ab6f6ea385f303))
+
 # [1.1.0](https://github.com/shivanshkc/mandelbrot/compare/v1.0.0...v1.1.0) (2024-05-12)
 
 
