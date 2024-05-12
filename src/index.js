@@ -130,7 +130,7 @@ async function main() {
 
     // Uniform to control the power of z in the mandelbrot function.
     const uZPower = gl.getUniformLocation(program, "u_zPower");
-    let zPower = 2;
+    let zPower = 0;
 
     // First timestamp to normalize render loop timestamps.
     let firstTimestamp;
@@ -157,7 +157,9 @@ async function main() {
         gl.uniform1i(uShowCrosshair, isMouseDown ? 1 : 0);
         // Update FPS.
         gl.uniform1f(uFPS, fps.average10);
-        // Power of the iterative function.
+
+        // Update the power of Z.
+        zPower = zPower < 2 ? Math.sin(timestamp * 0.001) + 1.0001 : 2;
         gl.uniform1f(uZPower, zPower);
 
         // Clear the canvas and draw.
