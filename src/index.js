@@ -1,3 +1,54 @@
+/** @type {number} */
+let zoomLevel = Math.min(300.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
+/** @type {[number, number]} */
+let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
+/** @type {boolean} */
+let isMouseDown = false; // Keep track if mouse is down, for click and drag.
+
+function attachMouseControls() {
+    window.onmousedown = () => isMouseDown = true;
+    window.onmouseup = () => isMouseDown = false;
+
+    // Respond to mouse wheel movements.
+    window.onwheel = (event) => {
+        zoomLevel = Math.max(10, zoomLevel - (event.deltaY * zoomLevel * 0.001));
+    }
+
+    // Keep track of mouse movement, for click and drag.
+    window.onmousemove = (event) => {
+        // Do nothing is mouse is not down.
+        if (!isMouseDown) return;
+        // Update translation.
+        translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
+    };
+}
+
+function attachTouchControls() {
+    let previousTouch;
+
+    window.ontouchstart = () => isMouseDown = true;
+    window.ontouchend = () => {
+        isMouseDown = false;
+        previousTouch = null;
+    }
+
+    window.ontouchmove = (event) => {
+        event.preventDefault();
+
+        // Do nothing is mouse is not down.
+        if (!isMouseDown) return;
+
+        const touch = event.touches[0];
+        if (previousTouch) {
+            const mx = touch.pageX - previousTouch.pageX;
+            const my = touch.pageY - previousTouch.pageY;
+            translation = [translation[0] - mx / zoomLevel, translation[1] + my / zoomLevel];
+        }
+
+        previousTouch = touch;
+    };
+}
+
 async function main() {
     // Load shaders.
     const vSource = await utils.fetchText("shaders/vert.glsl");
@@ -37,42 +88,21 @@ async function main() {
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
+    attachMouseControls();
+    attachTouchControls();
+
     // Uniform for screen size.
     const uScreenSizeLoc = gl.getUniformLocation(program, 'u_screenSize');
-    gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
-
     // Uniform for zoom level.
     const uZoomLevelLoc = gl.getUniformLocation(program, "u_zoomLevel");
-    let zoomLevel = 300.0;
-
     // Uniform for axis translation.
     const uTranslationLoc = gl.getUniformLocation(program, "u_translation");
-    let translation = [0, 0];
-
     // Uniform to control if the crosshair should be shown.
     const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
 
     // Uniform to control the power of z in the mandelbrot function.
     const uZPower = gl.getUniformLocation(program, "u_zPower");
     let zPower = 0.0;
-
-    // Respond to mouse wheel movements.
-    window.onwheel = (event) => {
-        zoomLevel = Math.max(10, zoomLevel - (event.deltaY * zoomLevel * 0.001));
-    }
-
-    // Keep track if mouse is down, for click and drag.
-    let isMouseDown = false;
-    window.onmousedown = () => isMouseDown = true;
-    window.onmouseup = () => isMouseDown = false;
-
-    // Keep track of mouse movement, for click and drag.
-    window.onmousemove = (event) => {
-        // Do nothing is mouse is not down.
-        if (!isMouseDown) return;
-        // Update translation.
-        translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
-    };
 
     // Degree of the mandelbrot set for animations.
     const mandelDegree = 2.001;
@@ -85,6 +115,9 @@ async function main() {
      */
     function renderLoop(timestamp) {
         utils.showFPS(timestamp, subtext);
+
+        // Update screen size.
+        gl.uniform2f(uScreenSizeLoc, window.innerWidth, window.innerHeight);
 
         // Update zoom level.
         gl.uniform1f(uZoomLevelLoc, zoomLevel);
