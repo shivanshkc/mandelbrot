@@ -1,5 +1,5 @@
 /** @type {number} */
-let zoomLevel = Math.min(300.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
+let zoomLevel = Math.min(400.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
 /** @type {[number, number]} */
 let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
 /** @type {boolean} */
