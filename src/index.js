@@ -144,11 +144,14 @@ async function main() {
     const uFPS = gl.getUniformLocation(program, "u_fps");
 
     // Uniform to control the power of z in the mandelbrot function.
-    const uZPower = gl.getUniformLocation(program, "u_zPower");
-    let zPower = 0;
+    const uDegree = gl.getUniformLocation(program, "u_degree");
+    let degree = 0;
 
     // First timestamp to normalize render loop timestamps.
     let firstTimestamp;
+
+    // Keeps track of whether the startup animation is complete.
+    let isStartupAnimationDone = false;
 
     /**
      * Main render loop.
@@ -173,15 +176,25 @@ async function main() {
         // Update FPS.
         gl.uniform1f(uFPS, fps.average10);
 
-        // Update the power of Z.
-        if (zPower < 2) {
+        // Run startup animation.
+        if (!isStartupAnimationDone && degree < 2) {
             let next = Math.sin(timestamp * 0.001) + 1;
-            zPower = next > zPower ? next : 2;
+            degree = next > degree ? next : 2; // Don't let animation go beyond degree == 2
         } else {
-            zPower = 2;
+            // Once degree reaches 2, the startup animation shouldn't get triggered,
+            // even if degree is reduced below 2 by the slider.
+            isStartupAnimationDone = true;
+
+            // Enable the slider the first time this else block executes.
+            if (degreeSlider.disabled) {
+                degree = 2;
+                degreeSlider.disabled = false;
+                degreeSlider.value = degree;
+            } else degree = degreeSlider.value; // Change degree value based on slider input.
         }
 
-        gl.uniform1f(uZPower, zPower);
+        // Update degree in shader.
+        gl.uniform1f(uDegree, degree);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);
