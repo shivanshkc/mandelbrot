@@ -164,7 +164,11 @@ async function main() {
         gl.uniform1f(uFPS, fps.average10);
 
         // Update the power of Z.
-        zPower = zPower < 2 ? Math.sin(timestamp * 0.001) + 1.0001 : 2;
+        if (zPower < 2) {
+            let next = Math.sin(timestamp * 0.001) + 1;
+            zPower = next > zPower ? next : 2;
+        } else zPower = 2;
+
         gl.uniform1f(uZPower, zPower);
 
         // Clear the canvas and draw.
