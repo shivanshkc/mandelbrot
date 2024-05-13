@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/shivanshkc/mandelbrot/compare/v1.5.0...v1.5.1) (2024-05-13)
+
+
+### Bug Fixes
+
+* **core:** better minimum resolution ([92939aa](https://github.com/shivanshkc/mandelbrot/commit/92939aae3d6b6fad9be3512dc2ea6cf79d709111))
+
 # [1.5.0](https://github.com/shivanshkc/mandelbrot/compare/v1.4.0...v1.5.0) (2024-05-13)
 
 
