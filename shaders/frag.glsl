@@ -5,7 +5,7 @@ uniform vec2 u_screenSize;
 uniform float u_zoomLevel;
 uniform vec2 u_translation;
 uniform int u_showCrosshair;
-uniform float u_zPower;
+uniform float u_degree;
 uniform float u_fps;
 
 // Output pixel color.
@@ -48,14 +48,14 @@ vec2 cpow(vec2 base, float exponent) {
 
 mandelbrotData mandelbrot(vec2 point) {
     // Optimisation as per: https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set#Cardioid_/_bulb_checking
-    if (u_zPower == 2.0 && (isInMandelbrotCardioid(point) || isInMandelbrotBulb(point)))
+    if (u_degree == 2.0 && (isInMandelbrotCardioid(point) || isInMandelbrotBulb(point)))
         return mandelbrotData(true, vec2(0, 0), 0, true);
 
     vec2 z = vec2(0, 0);
 
     for (int i = 0; i < 200; i++) {
         // Znew = Z^n + C
-        z = cpow(z, u_zPower) + point;
+        z = cpow(z, u_degree) + point;
         // Escape time algorithm.
         // Using 256 here instead of 2.0 for color smoothing.
         if (length(z) > 256.0) return mandelbrotData(false, z, i, false);

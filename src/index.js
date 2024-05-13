@@ -5,29 +5,35 @@ let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
 /** @type {boolean} */
 let isMouseDown = false; // Keep track if mouse is down, for click and drag.
 
-function attachMouseControls() {
-    window.onmousedown = () => isMouseDown = true;
-    window.onmouseup = () => isMouseDown = false;
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+function attachMouseControls(canvas) {
+    canvas.addEventListener("mousedown", (ev) => isMouseDown = true);
+    canvas.addEventListener("mouseup", (ev) => isMouseDown = false);
 
     // Respond to mouse wheel movements.
-    window.onwheel = (event) => {
-        zoomLevel = Math.max(10, zoomLevel - (event.deltaY * zoomLevel * 0.001));
-    }
+    canvas.addEventListener("wheel", (ev) => {
+        zoomLevel = Math.max(10, zoomLevel - (ev.deltaY * zoomLevel * 0.001));
+    });
 
     // Keep track of mouse movement, for click and drag.
-    window.onmousemove = (event) => {
+    canvas.addEventListener("mousemove", (ev) => {
         // Do nothing if mouse is not down.
         if (!isMouseDown) return;
         // Update translation.
-        translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
-    };
+        translation = [translation[0] - ev.movementX / zoomLevel, translation[1] + ev.movementY / zoomLevel];
+    });
 }
 
-function attachTouchControls() {
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+function attachTouchControls(canvas) {
     let lastTouch;
     let lastPinchWidth;
 
-    window.ontouchstart = (event) => {
+    canvas.addEventListener("touchstart", (event) => {
         event.preventDefault();
 
         // To display the crosshair.
@@ -37,9 +43,9 @@ function attachTouchControls() {
         if (touches.length === 2) {
             lastPinchWidth = Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
         }
-    }
+    });
 
-    window.ontouchend = (event) => {
+    canvas.addEventListener("touchend", (event) => {
         event.preventDefault();
 
         // To remove the crosshair.
@@ -47,9 +53,9 @@ function attachTouchControls() {
 
         lastTouch = null;
         initialDistance = null;
-    }
+    });
 
-    window.ontouchmove = (event) => {
+    canvas.addEventListener("touchmove", (event) => {
         event.preventDefault();
 
         const { touches } = event;
@@ -72,7 +78,7 @@ function attachTouchControls() {
             default:
                 break;
         }
-    };
+    });
 }
 
 async function main() {
@@ -92,6 +98,14 @@ async function main() {
 
     // Element to render FPS.
     const subtext = document.getElementById("subtext");
+
+    // Element to control the mandelbrot degree.
+    const degreeSlider = document.getElementById("degree-slider-input");
+    degreeSlider.disabled = true;
+
+    // Reset button element.
+    const resetButton = document.getElementById("reset-button");
+    resetButton.disabled = true;
 
     // Initialize WebGL context.
     const gl = canvas.getContext("webgl2");
@@ -119,8 +133,8 @@ async function main() {
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-    attachMouseControls();
-    attachTouchControls();
+    attachMouseControls(canvas);
+    attachTouchControls(canvas);
 
     // Uniform for screen size.
     const uScreenSizeLoc = gl.getUniformLocation(program, 'u_screenSize');
@@ -134,11 +148,22 @@ async function main() {
     const uFPS = gl.getUniformLocation(program, "u_fps");
 
     // Uniform to control the power of z in the mandelbrot function.
-    const uZPower = gl.getUniformLocation(program, "u_zPower");
-    let zPower = 0;
+    const uDegree = gl.getUniformLocation(program, "u_degree");
+    let degree = 0;
 
     // First timestamp to normalize render loop timestamps.
     let firstTimestamp;
+
+    // Keeps track of whether the startup animation is complete.
+    let isStartupAnimationDone = false;
+
+    // Reset everything on reset button click.
+    resetButton.onclick = (ev) => {
+        zoomLevel = Math.min(400.0, window.innerWidth / 4.25);
+        translation = [-0.5, 0];
+        isMouseDown = false;
+        degreeSlider.value = 2;
+    };
 
     /**
      * Main render loop.
@@ -163,9 +188,28 @@ async function main() {
         // Update FPS.
         gl.uniform1f(uFPS, fps.average10);
 
-        // Update the power of Z.
-        zPower = zPower < 2 ? Math.sin(timestamp * 0.001) + 1.0001 : 2;
-        gl.uniform1f(uZPower, zPower);
+        // Run startup animation.
+        if (!isStartupAnimationDone && degree < 2) {
+            let next = Math.sin(timestamp * 0.001) + 1;
+            degree = next > degree ? next : 2; // Don't let animation go beyond degree == 2
+        } else {
+            // Once degree reaches 2, the startup animation shouldn't get triggered,
+            // even if degree is reduced below 2 by the slider.
+            isStartupAnimationDone = true;
+
+            // Enable the UI control elements the first time this else block executes.
+            if (degreeSlider.disabled) {
+                degree = 2;
+                // Enable degree slider.
+                degreeSlider.disabled = false;
+                degreeSlider.value = degree;
+                // Enable reset button.
+                resetButton.disabled = false;
+            } else degree = degreeSlider.value; // Change degree value based on slider input.
+        }
+
+        // Update degree in shader.
+        gl.uniform1f(uDegree, degree);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);
