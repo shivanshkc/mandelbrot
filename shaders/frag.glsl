@@ -7,6 +7,7 @@ uniform vec2 u_translation;
 uniform int u_showCrosshair;
 uniform float u_degree;
 uniform float u_fps;
+uniform int u_resolution;
 
 // Output pixel color.
 out vec4 fragColor;
@@ -53,7 +54,7 @@ mandelbrotData mandelbrot(vec2 point) {
 
     vec2 z = vec2(0, 0);
 
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < u_resolution; i++) {
         // Znew = Z^n + C
         z = cpow(z, u_degree) + point;
         // Escape time algorithm.

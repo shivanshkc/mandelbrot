@@ -4,6 +4,8 @@ let zoomLevel = Math.min(400.0, window.innerWidth / 4.25); // This Math.min make
 let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
 /** @type {boolean} */
 let isMouseDown = false; // Keep track if mouse is down, for click and drag.
+/** @type {number} */
+let resolution = 200; // Number of iterations in the escape time algorithm.
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -103,6 +105,10 @@ async function main() {
     const degreeSlider = document.getElementById("degree-slider-input");
     degreeSlider.disabled = true;
 
+    // Element to control the render resolution.
+    const resolutionSlider = document.getElementById("resolution-slider-input");
+    resolutionSlider.disabled = true;
+
     // Reset button element.
     const resetButton = document.getElementById("reset-button");
     resetButton.disabled = true;
@@ -146,6 +152,8 @@ async function main() {
     const uShowCrosshair = gl.getUniformLocation(program, "u_showCrosshair");
     // Uniform to send FPS to the shader.
     const uFPS = gl.getUniformLocation(program, "u_fps");
+    // Uniform to control the resolution of the render.
+    const uResolution = gl.getUniformLocation(program, "u_resolution");
 
     // Uniform to control the power of z in the mandelbrot function.
     const uDegree = gl.getUniformLocation(program, "u_degree");
@@ -163,6 +171,7 @@ async function main() {
         translation = [-0.5, 0];
         isMouseDown = false;
         degreeSlider.value = 2;
+        resolutionSlider.value = 200;
     };
 
     /**
@@ -203,13 +212,21 @@ async function main() {
                 // Enable degree slider.
                 degreeSlider.disabled = false;
                 degreeSlider.value = degree;
+                // Enable resolution slider.
+                resolutionSlider.disabled = false;
+                resolutionSlider.value = resolution;
                 // Enable reset button.
                 resetButton.disabled = false;
-            } else degree = degreeSlider.value; // Change degree value based on slider input.
+            } else {
+                degree = degreeSlider.value; // Change degree value based on slider input.
+                resolution = resolutionSlider.value; // Change resolution value based on slider input.
+            }
         }
 
         // Update degree in shader.
         gl.uniform1f(uDegree, degree);
+        // Update resolution in shader.
+        gl.uniform1i(uResolution, resolution);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);
