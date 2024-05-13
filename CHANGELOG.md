@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/shivanshkc/mandelbrot/compare/v1.4.0...v1.5.0) (2024-05-13)
+
+
+### Features
+
+* **core:** add resolution slider ([8063fc3](https://github.com/shivanshkc/mandelbrot/commit/8063fc34491a589f33b58e4e369c909b69672380))
+
 # [1.4.0](https://github.com/shivanshkc/mandelbrot/compare/v1.3.0...v1.4.0) (2024-05-13)
 
 
