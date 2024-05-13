@@ -5,29 +5,35 @@ let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
 /** @type {boolean} */
 let isMouseDown = false; // Keep track if mouse is down, for click and drag.
 
-function attachMouseControls() {
-    window.onmousedown = () => isMouseDown = true;
-    window.onmouseup = () => isMouseDown = false;
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+function attachMouseControls(canvas) {
+    canvas.addEventListener("mousedown", (ev) => isMouseDown = true);
+    canvas.addEventListener("mouseup", (ev) => isMouseDown = false);
 
     // Respond to mouse wheel movements.
-    window.onwheel = (event) => {
-        zoomLevel = Math.max(10, zoomLevel - (event.deltaY * zoomLevel * 0.001));
-    }
+    canvas.addEventListener("wheel", (ev) => {
+        zoomLevel = Math.max(10, zoomLevel - (ev.deltaY * zoomLevel * 0.001));
+    });
 
     // Keep track of mouse movement, for click and drag.
-    window.onmousemove = (event) => {
+    canvas.addEventListener("mousemove", (ev) => {
         // Do nothing if mouse is not down.
         if (!isMouseDown) return;
         // Update translation.
-        translation = [translation[0] - event.movementX / zoomLevel, translation[1] + event.movementY / zoomLevel];
-    };
+        translation = [translation[0] - ev.movementX / zoomLevel, translation[1] + ev.movementY / zoomLevel];
+    });
 }
 
-function attachTouchControls() {
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+function attachTouchControls(canvas) {
     let lastTouch;
     let lastPinchWidth;
 
-    window.ontouchstart = (event) => {
+    canvas.addEventListener("touchstart", (event) => {
         event.preventDefault();
 
         // To display the crosshair.
@@ -37,9 +43,9 @@ function attachTouchControls() {
         if (touches.length === 2) {
             lastPinchWidth = Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
         }
-    }
+    });
 
-    window.ontouchend = (event) => {
+    canvas.addEventListener("touchend", (event) => {
         event.preventDefault();
 
         // To remove the crosshair.
@@ -47,9 +53,9 @@ function attachTouchControls() {
 
         lastTouch = null;
         initialDistance = null;
-    }
+    });
 
-    window.ontouchmove = (event) => {
+    canvas.addEventListener("touchmove", (event) => {
         event.preventDefault();
 
         const { touches } = event;
@@ -72,7 +78,7 @@ function attachTouchControls() {
             default:
                 break;
         }
-    };
+    });
 }
 
 async function main() {
@@ -92,6 +98,10 @@ async function main() {
 
     // Element to render FPS.
     const subtext = document.getElementById("subtext");
+
+    // Element to control the mandelbrot degree.
+    const degreeSlider = document.getElementById("degree-slider-input");
+    degreeSlider.disabled = true;
 
     // Initialize WebGL context.
     const gl = canvas.getContext("webgl2");
@@ -119,8 +129,8 @@ async function main() {
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-    attachMouseControls();
-    attachTouchControls();
+    attachMouseControls(canvas);
+    attachTouchControls(canvas);
 
     // Uniform for screen size.
     const uScreenSizeLoc = gl.getUniformLocation(program, 'u_screenSize');
@@ -167,7 +177,9 @@ async function main() {
         if (zPower < 2) {
             let next = Math.sin(timestamp * 0.001) + 1;
             zPower = next > zPower ? next : 2;
-        } else zPower = 2;
+        } else {
+            zPower = 2;
+        }
 
         gl.uniform1f(uZPower, zPower);
 

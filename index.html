@@ -24,11 +24,33 @@
             left: 5px;
             color: white;
         }
+
+        .degree-slider {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        .degree-slider-label {
+            color: white;
+        }
     </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </head>
 
 <body onload="main()">
     <p id="subtext"></p>
+
+    <div class="degree-slider">
+        <label for="degree-slider-input" class="form-label degree-slider-label">Degree</label>
+        <input type="range" class="form-range" min="0" max="5" id="degree-slider-input">
+    </div>
 
     <canvas id="universe"></canvas>
     <script src="src/utils.js"></script>
