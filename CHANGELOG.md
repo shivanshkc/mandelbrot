@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/shivanshkc/mandelbrot/compare/v1.3.0...v1.4.0) (2024-05-13)
+
+
+### Bug Fixes
+
+* **core:** fix animation loopback problem ([c9f218c](https://github.com/shivanshkc/mandelbrot/commit/c9f218ce85f668e96b650a29267f7b35edb6eb71))
+
+
+### Features
+
+* **core:** add functional slider ([0740da4](https://github.com/shivanshkc/mandelbrot/commit/0740da47cb7c993197b932edee003a68558874f2))
+* **core:** add reset button ([95bfedd](https://github.com/shivanshkc/mandelbrot/commit/95bfedd2d703724a7353a506d026a767d9317ef0))
+* **core:** bootstrap, degree slider and event handler fix ([a27a659](https://github.com/shivanshkc/mandelbrot/commit/a27a6597b9ac1bfb2d51024f390397bd781b38a7))
+
 # [1.3.0](https://github.com/shivanshkc/mandelbrot/compare/v1.2.0...v1.3.0) (2024-05-12)
 
 
