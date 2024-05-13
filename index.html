@@ -28,11 +28,17 @@
         .degree-slider {
             position: absolute;
             bottom: 5px;
-            right: 10px;
+            right: 70px;
         }
 
         .degree-slider-label {
             color: white;
+        }
+
+        #reset-button {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
         }
     </style>
 
@@ -42,6 +48,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
 <body onload="main()">
@@ -51,6 +59,10 @@
         <label for="degree-slider-input" class="form-label degree-slider-label">Degree</label>
         <input type="range" class="form-range" min="1" max="6" step="0.001" id="degree-slider-input">
     </div>
+
+    <button type="button" class="btn btn-light" id="reset-button">
+        <i class="bi bi-arrow-clockwise"></i>
+    </button>
 
     <canvas id="universe"></canvas>
     <script src="src/utils.js"></script>

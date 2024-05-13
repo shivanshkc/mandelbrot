@@ -103,6 +103,10 @@ async function main() {
     const degreeSlider = document.getElementById("degree-slider-input");
     degreeSlider.disabled = true;
 
+    // Reset button element.
+    const resetButton = document.getElementById("reset-button");
+    resetButton.disabled = true;
+
     // Initialize WebGL context.
     const gl = canvas.getContext("webgl2");
     if (!gl) {
@@ -153,6 +157,14 @@ async function main() {
     // Keeps track of whether the startup animation is complete.
     let isStartupAnimationDone = false;
 
+    // Reset everything on reset button click.
+    resetButton.onclick = (ev) => {
+        zoomLevel = Math.min(400.0, window.innerWidth / 4.25);
+        translation = [-0.5, 0];
+        isMouseDown = false;
+        degreeSlider.value = 2;
+    };
+
     /**
      * Main render loop.
      * @param {number} timestamp
@@ -185,11 +197,14 @@ async function main() {
             // even if degree is reduced below 2 by the slider.
             isStartupAnimationDone = true;
 
-            // Enable the slider the first time this else block executes.
+            // Enable the UI control elements the first time this else block executes.
             if (degreeSlider.disabled) {
                 degree = 2;
+                // Enable degree slider.
                 degreeSlider.disabled = false;
                 degreeSlider.value = degree;
+                // Enable reset button.
+                resetButton.disabled = false;
             } else degree = degreeSlider.value; // Change degree value based on slider input.
         }
 
