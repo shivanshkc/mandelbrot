@@ -1,11 +1,20 @@
 /** @type {number} */
-let zoomLevel = Math.min(400.0, window.innerWidth / 4.25); // This Math.min makes the fractal fit on mobile screens.
+let zoomLevel;
 /** @type {[number, number]} */
-let translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
+let translation;
 /** @type {boolean} */
-let isMouseDown = false; // Keep track if mouse is down, for click and drag.
-/** @type {number} */
-let resolution = 200; // Number of iterations in the escape time algorithm.
+let isMouseDown;
+
+/**
+ * @param {HTMLInputElement} resolutionSlider
+ */
+function setDefaultValues(degreeSlider, resolutionSlider) {
+    zoomLevel = Math.min(400.0, window.innerWidth / 3.2); // This Math.min makes the fractal fit on mobile screens.
+    translation = [-0.5, 0]; // -0.5 centers the mandelbrot set.
+    isMouseDown = false; // Keep track if mouse is down, for click and drag.
+    degreeSlider.value = 2;
+    resolutionSlider.value = 200; // Number of iterations in the escape time algorithm.
+}
 
 /**
  * @param {HTMLCanvasElement} canvas
@@ -103,15 +112,15 @@ async function main() {
 
     // Element to control the mandelbrot degree.
     const degreeSlider = document.getElementById("degree-slider-input");
-    degreeSlider.disabled = true;
-
     // Element to control the render resolution.
     const resolutionSlider = document.getElementById("resolution-slider-input");
-    resolutionSlider.disabled = true;
-
     // Reset button element.
     const resetButton = document.getElementById("reset-button");
-    resetButton.disabled = true;
+    // Reset everything on reset button click.
+    resetButton.onclick = _ => setDefaultValues(degreeSlider, resolutionSlider);
+
+    // Initially set things to default.
+    setDefaultValues(degreeSlider, resolutionSlider);
 
     // Initialize WebGL context.
     const gl = canvas.getContext("webgl2");
@@ -157,22 +166,12 @@ async function main() {
 
     // Uniform to control the power of z in the mandelbrot function.
     const uDegree = gl.getUniformLocation(program, "u_degree");
-    let degree = 0;
+    degreeSlider.value = 0;
 
     // First timestamp to normalize render loop timestamps.
     let firstTimestamp;
-
     // Keeps track of whether the startup animation is complete.
     let isStartupAnimationDone = false;
-
-    // Reset everything on reset button click.
-    resetButton.onclick = (ev) => {
-        zoomLevel = Math.min(400.0, window.innerWidth / 4.25);
-        translation = [-0.5, 0];
-        isMouseDown = false;
-        degreeSlider.value = 2;
-        resolutionSlider.value = 200;
-    };
 
     /**
      * Main render loop.
@@ -198,35 +197,24 @@ async function main() {
         gl.uniform1f(uFPS, fps.average10);
 
         // Run startup animation.
-        if (!isStartupAnimationDone && degree < 2) {
+        if (!isStartupAnimationDone && degreeSlider.value < 2) {
             let next = Math.sin(timestamp * 0.001) + 1;
-            degree = next > degree ? next : 2; // Don't let animation go beyond degree == 2
+            degreeSlider.value = next >= degreeSlider.value ? next : 2; // Don't let animation go beyond degree == 2
         } else {
             // Once degree reaches 2, the startup animation shouldn't get triggered,
             // even if degree is reduced below 2 by the slider.
             isStartupAnimationDone = true;
-
-            // Enable the UI control elements the first time this else block executes.
-            if (degreeSlider.disabled) {
-                degree = 2;
-                // Enable degree slider.
-                degreeSlider.disabled = false;
-                degreeSlider.value = degree;
-                // Enable resolution slider.
-                resolutionSlider.disabled = false;
-                resolutionSlider.value = resolution;
-                // Enable reset button.
-                resetButton.disabled = false;
-            } else {
-                degree = degreeSlider.value; // Change degree value based on slider input.
-                resolution = resolutionSlider.value; // Change resolution value based on slider input.
-            }
         }
 
+        // Enable UI elements once animation is complete.
+        degreeSlider.disabled = !isStartupAnimationDone;
+        resolutionSlider.disabled = !isStartupAnimationDone;
+        resetButton.disabled = !isStartupAnimationDone;
+
         // Update degree in shader.
-        gl.uniform1f(uDegree, degree);
+        gl.uniform1f(uDegree, degreeSlider.value);
         // Update resolution in shader.
-        gl.uniform1i(uResolution, resolution);
+        gl.uniform1i(uResolution, resolutionSlider.value);
 
         // Clear the canvas and draw.
         gl.clearColor(0, 0, 0, 1);
