@@ -28,16 +28,18 @@
         .degree-slider {
             position: absolute;
             bottom: 5px;
-            right: 70px;
+            right: 60px;
         }
 
         .degree-slider-label {
             color: white;
+            /* Override the .form-label margin */
+            margin: 0 !important;
         }
 
         #reset-button {
             position: absolute;
-            bottom: 5px;
+            bottom: 7px;
             right: 10px;
         }
     </style>
@@ -60,7 +62,7 @@
         <input type="range" class="form-range" min="1" max="6" step="0.001" id="degree-slider-input">
     </div>
 
-    <button type="button" class="btn btn-light" id="reset-button">
+    <button type="button" class="btn btn-sm btn-light" id="reset-button">
         <i class="bi bi-arrow-clockwise"></i>
     </button>
 
