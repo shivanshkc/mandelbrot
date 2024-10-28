@@ -99,6 +99,13 @@ void main() {
 
     vec2 transformedXY = transformAxes(xy);
     mandelbrotData data = mandelbrot(transformedXY);
+
+    if (data.isEquationOptimized) {
+        // Optionally, render different colour to verify optimization.
+        fragColor = vec4(0, 0, 0, 1);
+        return;
+    }
+
     if (data.inside) {
         fragColor = vec4(0, 0, 0, 1);
         return;
