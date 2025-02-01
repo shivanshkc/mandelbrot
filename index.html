@@ -7,79 +7,105 @@
     <title>Mandelbrot</title>
 
     <style>
-        html,
-        body {
+        html, body {
             margin: 0;
             overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
         }
 
         #universe {
             touch-action: none;
+            width: 100%;
+            height: 100vh;
         }
 
         #subtext {
             margin: 0;
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            color: white;
+            bottom: 10px;
+            left: 10px;
+            font-size: 14px;
+            opacity: 0.75;
         }
 
-        .degree-slider {
+        .slider-container {
             position: absolute;
-            bottom: 0;
-            right: 10px;
-
-            width: 185px;
+            right: 15px;
+            width: 200px;
+            padding: 5px;
         }
 
         .resolution-slider {
-            position: absolute;
-            bottom: 50px;
-            right: 10px;
+            bottom: 80px;
+        }
 
-            width: 185px;
+        .degree-slider {
+            bottom: 30px;
         }
 
         .slider-label {
-            color: white;
-            /* Override the .form-label margin */
-            margin: 0 !important;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #444;
+            border-radius: 5px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 50%;
+            border: 2px solid #888;
         }
 
         #reset-button {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 10px;
+            right: 15px;
+            padding: 8px 12px;
+            font-size: 14px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #reset-button:hover {
+            background: #0056b3;
         }
     </style>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
 </head>
 
 <body onload="main()">
     <p id="subtext"></p>
 
-    <div class="resolution-slider">
-        <label for="resolution-slider-input" class="form-label slider-label">Resolution</label>
-        <input type="range" class="form-range" min="5" max="500" step="1" id="resolution-slider-input">
+    <div class="slider-container resolution-slider">
+        <label for="resolution-slider-input" class="slider-label">Resolution</label>
+        <input type="range" min="5" max="2000" step="1" id="resolution-slider-input">
     </div>
 
-    <div class="degree-slider">
-        <label for="degree-slider-input" class="form-label slider-label">Degree</label>
-        <input type="range" class="form-range" min="1" max="6" step="0.001" id="degree-slider-input">
+    <div class="slider-container degree-slider">
+        <label for="degree-slider-input" class="slider-label">Degree</label>
+        <input type="range" min="1" max="6" step="0.001" id="degree-slider-input">
     </div>
 
-    <button type="button" class="btn btn-sm btn-primary" id="reset-button">
-        Reset
-    </button>
+    <button id="reset-button">Reset</button>
 
     <canvas id="universe"></canvas>
+
     <script src="src/utils.js"></script>
     <script src="src/index.js"></script>
 </body>
