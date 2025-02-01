@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/shivanshkc/mandelbrot/compare/v1.5.1...v1.6.0) (2025-02-01)
+
+
+### Features
+
+* **core:** increase max resolution, refine UI ([2fafedf](https://github.com/shivanshkc/mandelbrot/commit/2fafedfe540d5ace349cfc387ae1561d2b19809c))
+
 ## [1.5.1](https://github.com/shivanshkc/mandelbrot/compare/v1.5.0...v1.5.1) (2024-05-13)
 
 
