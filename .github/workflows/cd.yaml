@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/semver
@@ -26,12 +26,10 @@ jobs:
     needs: semver
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/deploy
         with:
-          service-account-email: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          service-account-key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-          project-id: ${{ secrets.GCP_PROJECT_ID }}
-          region: ${{ secrets.GCP_REGION }}
-          repository: ${{ secrets.GCP_REPOSITORY_NAME }}
-          service: ${{ secrets.GCP_SERVICE_NAME }}
+          service-account-key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          region: us-central1
+          repository: mandelbrot
+          service_name: mandelbrot
