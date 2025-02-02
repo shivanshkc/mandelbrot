@@ -1,3 +1,12 @@
+## [1.7.2](https://github.com/shivanshkc/mandelbrot/compare/v1.7.1...v1.7.2) (2025-02-02)
+
+
+### Bug Fixes
+
+* **ci:** simpler deploy action ([08baa4a](https://github.com/shivanshkc/mandelbrot/commit/08baa4ad3530de7429a78b5eaece0e1bc4704324))
+* **core:** mobile browser screen size issue fix ([3d2b09f](https://github.com/shivanshkc/mandelbrot/commit/3d2b09fd275f31bf8c2a565389591193315f93f4))
+* **core:** remove unused tailwind classes ([77a3ac0](https://github.com/shivanshkc/mandelbrot/commit/77a3ac0f93f6e90fba6b387291aba1f148628346))
+
 ## [1.7.1](https://github.com/shivanshkc/mandelbrot/compare/v1.7.0...v1.7.1) (2025-02-02)
 
 
