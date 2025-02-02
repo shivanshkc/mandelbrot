@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/shivanshkc/mandelbrot/compare/v1.7.0...v1.7.1) (2025-02-02)
+
+
+### Bug Fixes
+
+* **core:** improve container security, add favicon, update readme image ([9e5b58f](https://github.com/shivanshkc/mandelbrot/commit/9e5b58f07fbf7680d38969a3d8c57b80c04db9c5))
+
 # [1.7.0](https://github.com/shivanshkc/mandelbrot/compare/v1.6.0...v1.7.0) (2025-02-02)
 
 
