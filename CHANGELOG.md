@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/shivanshkc/mandelbrot/compare/v1.6.0...v1.7.0) (2025-02-02)
+
+
+### Features
+
+* **core:** add tailwind css ([4d1114f](https://github.com/shivanshkc/mandelbrot/commit/4d1114f16cef432920b0fc3b2db319b54ae2433e))
+
 # [1.6.0](https://github.com/shivanshkc/mandelbrot/compare/v1.5.1...v1.6.0) (2025-02-01)
 
 
