@@ -6,6 +6,7 @@ COPY src /source/src
 COPY favicon.png /source/favicon.png
 COPY index.html /source/index.html
 COPY LICENSE /source/LICENSE
+COPY tailwind-out.css /source/tailwind-out.css
 
 # Copy nginx configuration.
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf

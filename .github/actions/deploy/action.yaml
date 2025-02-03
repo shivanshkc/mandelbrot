@@ -45,7 +45,7 @@ runs:
 
     # Build the docker image.
     - name: Build the docker image.
-      run: docker build -f Containerfile -t ${{ inputs.service_name }}:${{ github.ref_name }} .
+      run: docker build -f Containerfile -t ${{ inputs.service_name }}:${{ github.sha }} .
       shell: bash
 
     # Push the docker image.
@@ -53,11 +53,11 @@ runs:
       run: |
         project_id=$(echo '${{ inputs.service-account-key }}' | jq -r .project_id)
 
-        docker tag ${{ inputs.service_name }}:${{ github.ref_name }} \
-          ${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.ref_name }}
+        docker tag ${{ inputs.service_name }}:${{ github.sha }} \
+          ${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.sha }}
 
         docker push \
-          ${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.ref_name }}
+          ${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.sha }}
       shell: bash
 
     # Deploy to cloud run cost-effectively.
@@ -75,7 +75,7 @@ runs:
           --port=8080 \
           --service-account=$service_account_email \
           --timeout=600 \
-          --image=${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.ref_name }} \
+          --image=${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.sha }} \
           --cpu-throttling \
           --region=${{ inputs.region }}
       shell: bash
