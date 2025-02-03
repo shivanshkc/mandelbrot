@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/shivanshkc/mandelbrot/compare/v1.7.2...v1.7.3) (2025-02-03)
+
+
+### Bug Fixes
+
+* **core:** use optimized tailwindcss ([d06303d](https://github.com/shivanshkc/mandelbrot/commit/d06303d98283cf027d6956b7b686ac74ac1a212d))
+
 ## [1.7.2](https://github.com/shivanshkc/mandelbrot/compare/v1.7.1...v1.7.2) (2025-02-02)
 
 
