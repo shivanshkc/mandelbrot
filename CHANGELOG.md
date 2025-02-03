@@ -1,3 +1,10 @@
+## [1.7.4](https://github.com/shivanshkc/mandelbrot/compare/v1.7.3...v1.7.4) (2025-02-03)
+
+
+### Bug Fixes
+
+* **ci:** rename Dockerfile to Containerfile ([74d5faa](https://github.com/shivanshkc/mandelbrot/commit/74d5faa192895ce71a769dd75b09386f4c103478))
+
 ## [1.7.3](https://github.com/shivanshkc/mandelbrot/compare/v1.7.2...v1.7.3) (2025-02-03)
 
 
