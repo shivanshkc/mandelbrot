@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/shivanshkc/mandelbrot/compare/v1.7.4...v1.7.5) (2025-02-03)
+
+
+### Bug Fixes
+
+* **ci:** remove secrets from cloud run command ([ca832df](https://github.com/shivanshkc/mandelbrot/commit/ca832dfacb3309474bba4308684cddc600091cbd))
+
 ## [1.7.4](https://github.com/shivanshkc/mandelbrot/compare/v1.7.3...v1.7.4) (2025-02-03)
 
 
