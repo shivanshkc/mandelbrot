@@ -1,3 +1,10 @@
+## [1.7.6](https://github.com/shivanshkc/mandelbrot/compare/v1.7.5...v1.7.6) (2025-02-03)
+
+
+### Bug Fixes
+
+* **ci:** add missing file to container, fix image tag ([bebd426](https://github.com/shivanshkc/mandelbrot/commit/bebd4264abd79f2c7546536aaac1f12c74c19257))
+
 ## [1.7.5](https://github.com/shivanshkc/mandelbrot/compare/v1.7.4...v1.7.5) (2025-02-03)
 
 
