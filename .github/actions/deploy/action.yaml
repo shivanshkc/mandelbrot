@@ -75,7 +75,6 @@ runs:
           --port=8080 \
           --service-account=$service_account_email \
           --timeout=600 \
-          --set-secrets=/etc/${{ inputs.service_name }}/configs.yaml=${{ inputs.service_name }}-configs:latest \
           --image=${{ inputs.region }}-docker.pkg.dev/$project_id/${{ inputs.repository }}/${{ inputs.service_name }}:${{ github.ref_name }} \
           --cpu-throttling \
           --region=${{ inputs.region }}
